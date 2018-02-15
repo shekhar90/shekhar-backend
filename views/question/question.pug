@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Question
+  form.form-horizontal(id='question-form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='question') Question
+      .col-sm-7
+        input.form-control(type='text', name='question', id='question', placeholder='Enter question description', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='option1') Option1
+      .col-sm-7
+        input.form-control(type='text', name='option1', id='option1', placeholder='Option 1', required)
+    .form-group
+      label.col-sm-3.control-label(for='option2') Option2
+      .col-sm-7
+        input.form-control(type='text', name='option2', id='option2', placeholder='Option 2', required)
+    .form-group
+      label.col-sm-3.control-label(for='option3') Option3
+      .col-sm-7
+        input.form-control(type='text', name='option3', id='option3', placeholder='Option 3', required)
+    .form-group
+      label.col-sm-3.control-label(for='option4') Option4
+      .col-sm-7
+        input.form-control(type='text', name='option4', id='option4', placeholder='Option 4', required)
+    .form-group
+      label.col-sm-3.control-label(for='description') Description
+      .col-sm-7
+        input.form-control(type='text', name='description', id='description', placeholder='Enter answer description', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='correct') Correct Option(o1, o2, o3, o4)
+      .col-sm-7
+        input.form-control(type='text', name='correct', id='correct', placeholder='Enter correct option', autofocus, required)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Create Question
