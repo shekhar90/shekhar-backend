@@ -12,6 +12,7 @@ import * as mongoose from "mongoose";
 import * as passport from "passport";
 import * as expressValidator from "express-validator";
 import * as bluebird from "bluebird";
+import * as cors from "cors";
 
 const MongoStore = mongo(session);
 
@@ -19,11 +20,11 @@ const MongoStore = mongo(session);
 dotenv.config({ path: ".env.example" });
 
 // Controllers (route handlers)
+import * as questionController from "./controllers/question";
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as contactController from "./controllers/contact";
-import * as questionController from "./controllers/question";
 
 
 // API keys and Passport configuration
@@ -36,7 +37,11 @@ const app = express();
 const mongoUrl = process.env.MONGOLAB_URI;
 (<any>mongoose).Promise = bluebird;
 mongoose.connect(mongoUrl, {useMongoClient: true}).then(
-  () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
+  () => {
+    const connection = mongoose.connection;
+    console.log("connected to db " + connection.modelNames());
+    /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+  },
 ).catch(err => {
   console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
   // process.exit();
@@ -46,6 +51,7 @@ mongoose.connect(mongoUrl, {useMongoClient: true}).then(
 app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
+app.use(cors());
 app.use(compression());
 app.use(logger("dev"));
 app.use(bodyParser.json());
@@ -106,7 +112,8 @@ app.post("/account/password", passportConfig.isAuthenticated, userController.pos
 app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
-app.get("/question", questionController.getQuestion);
+app.post("/question", questionController.postCreateQuestion);
+app.get("/getquestion", questionController.getQuestionById);
 
 /**
  * API examples routes.

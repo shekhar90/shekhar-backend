@@ -1,1 +1,8 @@
 https://github.com/Microsoft/TypeScript-Node-Starter
+MONGODB_URI=mongodb://suman:8092658993@ds229648.mlab.com:29648/test-db
+MONGOLAB_URI=mongodb://suman:8092658993@ds229648.mlab.com:29648/test-db
+
+SESSION_SECRET=ashdfjhasdlkjfhalksdjhflak
+
+FACEBOOK_ID=754220301289665
+FACEBOOK_SECRET=41860e58c256a3d7ad8267d3c1939a4a
