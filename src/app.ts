@@ -13,6 +13,7 @@ import * as passport from "passport";
 import * as expressValidator from "express-validator";
 import * as bluebird from "bluebird";
 import * as cors from "cors";
+import indexRouter from "./routes/index.route";
 
 const MongoStore = mongo(session);
 
@@ -20,7 +21,6 @@ const MongoStore = mongo(session);
 dotenv.config({ path: ".env.example" });
 
 // Controllers (route handlers)
-import * as questionController from "./controllers/question";
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
@@ -111,9 +111,8 @@ app.post("/account/profile", passportConfig.isAuthenticated, userController.post
 app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
 app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
+app.use("", indexRouter); // for now handling only question routes
 
-app.post("/question", questionController.postCreateQuestion);
-app.get("/getquestion", questionController.getQuestionById);
 
 /**
  * API examples routes.

@@ -1,12 +1,13 @@
 import { default as Question, QuestionModel } from "../models/Question";
 import { Request, Response, NextFunction } from "express";
+import * as _ from "lodash";
 import { WriteError } from "mongodb";
 const request = require("express-validator");
 
 
-export let postCreateQuestion = (req: Request, res: Response, next: NextFunction) => {
+export let postCreateQuestion = async (req: Request, res: Response) => {
   const id = req.body.id;
-  Question.findOne({"id": id}, function(err, existingQuestion) {
+  await Question.findOne({"id": id}, function(err, existingQuestion) {
     if (err) {
       res.send("Error in validating for existing question");
       return;
@@ -34,15 +35,21 @@ export let postCreateQuestion = (req: Request, res: Response, next: NextFunction
     }
   });
 };
-export let getQuestionById = (req: Request, res: Response, next: NextFunction) => {
-  const questionType = req.query.questionType;
-  const difficulty = req.query.difficulty;
-  Question.find({"questionType": questionType, "difficulty": difficulty}, function(err, question) {
-    if (err) {
-      console.log("Error in fetching question");
-    } else {
-      console.log("Questions fetched from db: success");
-      res.send(JSON.stringify(question));
-    }
-  });
+export let getQuestionById = async (req: Request, res: Response) => {
+  // no string notation is needed when called from postman
+  if (_.isEmpty(req.query)) {
+    console.log("query parameter missing");
+    throw new Error("query parameter missing");
+  } else {
+    const questionType = req.query.questionType;
+    const difficulty = req.query.difficulty;
+    await Question.find({"questionType": questionType, "difficulty": difficulty}, function(err, question) {
+      if (err) {
+        console.log("Error in fetching question");
+      } else {
+        console.log("Questions fetched from db: success");
+        res.send(question);
+      }
+    });
+  }
 };
