@@ -78,7 +78,8 @@ export let getSignup = (req: Request, res: Response) => {
  * POST /signup
  * Create a new local account.
  */
-export let postSignup = (req: Request, res: Response, next: NextFunction) => {
+export let postSignup = (req: Request, res: Response) => {
+  // url-form-encoded
   req.assert("email", "Email is not valid").isEmail();
   req.assert("password", "Password must be at least 4 characters long").len({ min: 4 });
   req.assert("confirmPassword", "Passwords do not match").equals(req.body.password);
@@ -87,8 +88,8 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/signup");
+    // show validation error
+    return res.send({ status: "error", data: errors });
   }
 
   const user = new User({
@@ -97,18 +98,23 @@ export let postSignup = (req: Request, res: Response, next: NextFunction) => {
   });
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {
-    if (err) { return next(err); }
+    if (err) { res.send(err); return; }
     if (existingUser) {
-      req.flash("errors", { msg: "Account with that email address already exists." });
-      return res.redirect("/signup");
+      // show error user already exists
+      res.send("user already exists");
+      return;
     }
     user.save((err) => {
-      if (err) { return next(err); }
+      if (err) { res.send(err); return; }
+      console.log("New user added");
       req.logIn(user, (err) => {
         if (err) {
-          return next(err);
+          res.send(err);
+          return;
         }
-        res.redirect("/");
+        // send to login page
+        res.send(user);
+        return;
       });
     });
   });
