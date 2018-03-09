@@ -13,14 +13,14 @@ const request = require("express-validator");
  * GET /login
  * Login page.
  */
-export let getLogin = (req: Request, res: Response) => {
-  if (req.user) {
-    return res.redirect("/");
-  }
-  res.render("account/login", {
-    title: "Login"
-  });
-};
+// export let getLogin = (req: Request, res: Response) => {
+//   if (req.user) {
+//     return res.redirect("/");
+//   }
+//   res.render("account/login", {
+//     title: "Login"
+//   });
+// };
 
 /**
  * POST /login
@@ -34,20 +34,17 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    req.flash("errors", errors);
-    return res.redirect("/login");
+    return res.send(errors);
   }
 
   passport.authenticate("local", (err: Error, user: UserModel, info: IVerifyOptions) => {
-    if (err) { return next(err); }
+    if (err) { return res.send({ status: "error", data: errors }); }
     if (!user) {
-      req.flash("errors", info.message);
-      return res.redirect("/login");
+      return res.send(info);
     }
     req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      req.flash("success", { msg: "Success! You are logged in." });
-      res.redirect(req.session.returnTo || "/");
+      if (err) { return res.send(err); }
+      return res.send({"status": "success", "msg": "Success! You are logged in."});
     });
   })(req, res, next);
 };
@@ -56,23 +53,23 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
  * GET /logout
  * Log out.
  */
-export let logout = (req: Request, res: Response) => {
-  req.logout();
-  res.redirect("/");
-};
+// export let logout = (req: Request, res: Response) => {
+//   req.logout();
+//   res.redirect("/");
+// };
 
 /**
  * GET /signup
  * Signup page.
  */
-export let getSignup = (req: Request, res: Response) => {
-  if (req.user) {
-    return res.redirect("/");
-  }
-  res.render("account/signup", {
-    title: "Create Account"
-  });
-};
+// export let getSignup = (req: Request, res: Response) => {
+//   if (req.user) {
+//     return res.redirect("/");
+//   }
+//   res.render("account/signup", {
+//     title: "Create Account"
+//   });
+// };
 
 /**
  * POST /signup
@@ -87,8 +84,7 @@ export let postSignup = (req: Request, res: Response) => {
 
   const errors = req.validationErrors();
 
-  if (errors) {
-    // show validation error
+  if (errors) { // show validation error
     return res.send({ status: "error", data: errors });
   }
 
@@ -98,23 +94,17 @@ export let postSignup = (req: Request, res: Response) => {
   });
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {
-    if (err) { res.send(err); return; }
-    if (existingUser) {
-      // show error user already exists
-      res.send("user already exists");
-      return;
+    if (err) { return res.send(err); }
+    if (existingUser) { // show error user already exists
+      return res.send("user already exists");
     }
     user.save((err) => {
-      if (err) { res.send(err); return; }
-      console.log("New user added");
+      if (err) { return res.send(err); }
       req.logIn(user, (err) => {
         if (err) {
-          res.send(err);
-          return;
+          return res.send(err);
         }
-        // send to login page
-        res.send(user);
-        return;
+        return res.send(user); // send to login page
       });
     });
   });
@@ -124,11 +114,11 @@ export let postSignup = (req: Request, res: Response) => {
  * GET /account
  * Profile page.
  */
-export let getAccount = (req: Request, res: Response) => {
-  res.render("account/profile", {
-    title: "Account Management"
-  });
-};
+// export let getAccount = (req: Request, res: Response) => {
+//   res.render("account/profile", {
+//     title: "Account Management"
+//   });
+// };
 
 /**
  * POST /account/profile
