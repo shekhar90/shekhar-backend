@@ -89,22 +89,24 @@ export let postSignup = (req: Request, res: Response) => {
   }
 
   const user = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password
   });
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {
-    if (err) { return res.send(err); }
+    if (err) { return res.send({ status: "error", data: err }); }
     if (existingUser) { // show error user already exists
-      return res.send("user already exists");
+      return res.send({ status: "success", data: {msg: "user already exists" }});
     }
     user.save((err) => {
-      if (err) { return res.send(err); }
+      if (err) { return res.send({ status: "error", data: err }); }
       req.logIn(user, (err) => {
         if (err) {
-          return res.send(err);
+          return res.send({ status: "error", data: err });
         }
-        return res.send(user); // send to login page
+        return res.send({ status: "success", data: {msg: "user created"} }); // send to login page
       });
     });
   });
