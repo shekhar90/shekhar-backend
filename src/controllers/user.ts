@@ -34,16 +34,16 @@ export let postLogin = (req: Request, res: Response, next: NextFunction) => {
   const errors = req.validationErrors();
 
   if (errors) {
-    return res.send(errors);
+    return res.send({ status: "error", data: errors });
   }
 
   passport.authenticate("local", (err: Error, user: UserModel, info: IVerifyOptions) => {
-    if (err) { return res.send({ status: "error", data: errors }); }
+    if (err) { return res.send({ status: "error", data: err }); }
     if (!user) {
-      return res.send(info);
+      return res.send({ status: "error", data: info });
     }
     req.logIn(user, (err) => {
-      if (err) { return res.send(err); }
+      if (err) { return res.send({ status: "error", data: err }); }
       return res.send({"status": "success", "msg": "Success! You are logged in."});
     });
   })(req, res, next);
