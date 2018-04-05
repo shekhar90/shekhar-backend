@@ -32,6 +32,6 @@ bower_components
 Thumbs.db
 
 # Ignore built ts files
-dist/**/*
+#dist/**/*
 # Ignore db files
 /data/**/*
