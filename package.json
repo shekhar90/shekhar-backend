@@ -8,6 +8,9 @@
     },
     "author": "Shekhar Suman",
     "license": "MIT",
+    "engines": {
+        "node": "8.0.0"
+    },
     "scripts": {
         "start": "npm run serve",
         "build": "npm run build-sass && npm run build-ts && npm run tslint && npm run copy-static-assets",
